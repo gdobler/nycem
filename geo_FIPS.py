@@ -21,17 +21,17 @@ def load_data(file):
 
 	for i in reader:
 		loc = (i[20], i[21]) 
-		loc_list.append(loc)  	
-	
-	print loc_list[0:20]
+		#loc_list.append(loc)  	
+		print loc
 
 
-	print "done in ", datetime.now() - startTime	
+
+#	print "done in ", datetime.now() - startTime	
 
 
 if __name__=='__main__':
 	startTime = datetime.now()
-	print startTime
+#	print startTime
 	directory = os.environ['data_path']
 	files = sorted(os.listdir(directory))
 	df10 = directory + "/" + files[0] #make this dynamic at some point 
