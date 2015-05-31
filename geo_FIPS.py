@@ -4,30 +4,47 @@ from urllib import urlopen
 import csv 
 from datetime import datetime
 
-def add_geoFIPS(lat, lng):
-	
-	address = "http://data.fcc.gov/api/block/find?format=json&latitude="+ str(lat) + "&longitude=" + str(lng) + "&showall=true"
-	url = urlopen(address).read() 
-	result = json.loads(url) 
-	geo_fips = str(result['Block'].values()[0])
-	return geo_fips	 
+
+def load_MI_data(file):
+	f = open(file) 
+	reader = csv.reader(f) 
+
+	median_incomes = {} 
+	headers = reader.next() 
+
+	for item in reader: 
+		new_key = item[18] + item[19] 
+		if len(new_key) == 7: 
+
+			try: 
+				income = float(item[55]) 
+			except:
+				income = 0 
+
+			median_incomes[new_key] = income
+			
+		else:
+			pass 
+
+	print median_incomes   
+
 
 def load_data(file):
 	f = open(file) 
 	reader = csv.reader(f)
 	headers = reader.next() 
 	
-	loc_list = [] 
+	co_name = headers.index('CONAME')
+	co_add = headers.index('ADDR') 
+	ct = headers.index('CENSUS_TRACT_2010') 
+	cb = headers.index('CENSUS_BG_2010') 
 
-	for i in reader:
-		loc = (i[20], i[21]) 
-		#loc_list.append(loc)  	
-		print loc
-
+	for business in reader:
+		print business[ct], business[cb]
 
 
 #	print "done in ", datetime.now() - startTime	
-
+#['CONAME', 'ADDR', 'CITY', 'STATE', 'ZIP', 'INDFRM', 'PRMSIC', 'PRMSICD', 'PNACODE', 'PNATITL', 'EMPSDT', 'SLSVDT', 'HDBRCH', 'ABI', 'SUBNUM', 'ULTNUM', 'CENSUS_TRACT_2000', 'GE_CENSUS_BG_2000', 'CENSUS_TRACT_2010', 'CENSUS_BG_2010', 'LATITUDE_2010', 'LONGITUDE_2010']
 
 if __name__=='__main__':
 	startTime = datetime.now()
@@ -35,4 +52,4 @@ if __name__=='__main__':
 	directory = os.environ['data_path']
 	files = sorted(os.listdir(directory))
 	df10 = directory + "/" + files[0] #make this dynamic at some point 
-	load_data(df10) 
+	load_MI_data("acs_MI.csv") 
