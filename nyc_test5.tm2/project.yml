@@ -1,0 +1,28 @@
+_prefs: 
+  mapid: kl1771.8914dbc5
+  saveCenter: true
+_properties: 
+  bridge: 
+    "group-by": layer
+attribution: "<a href='https://www.mapbox.com/about/maps/' target='_blank'>&copy; Mapbox &copy; OpenStreetMap</a> <a class='mapbox-improve-map' href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a>"
+bounds: 
+  - -180
+  - -85.0511
+  - 180
+  - 85.0511
+center: 
+  - -73.9945
+  - 40.6868
+  - 15
+description: 'Mapping tool for small businesses in NYC. '
+format: "png8:m=h"
+interactivity_layer: ''
+layers: null
+maxzoom: 22
+minzoom: 0
+name: NYCEM Map
+source: "mapbox:///mapbox.mapbox-streets-v5,kl1771.64443c6b,kl1771.73c3544b"
+styles: 
+  - style.mss
+  - design.mss
+template: ''
