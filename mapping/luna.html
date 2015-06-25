@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset=utf-8 />
+	<title></title>
+	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.2.0/mapbox.js'></script>
+	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.2.0/mapbox.css' rel='stylesheet' />
+	<style>
+	body { margin:0; padding:0; }
+    .map { position:absolute; top:0; bottom:0; width:100%; }
+    </style>
+</head>
+
+<body>
+	<div id='map-one' class='map'> </div>
+	<script>
+
+	L.mapbox.accessToken = 'pk.eyJ1Ijoia3JsdW5hIiwiYSI6IjRkNWIwYjlmOWEzNjUyNDM4MDM0NjE2N2E3YjkwMWFjIn0.hsgqrS6U0DoptNhqWAyY9A';
+
+	// var geojson = [
+ //  	{
+	// "type": "FeatureCollection",
+	// "features": [
+ //    {
+	// 	"type": "Feature",
+	//     "geometry": {
+	//     "type": "Point",
+	//     "coordinates": [
+	//     -73.9708,
+	//     40.6617
+	//     ]
+	// },
+	// "properties": {}
+	// }]
+	// }];
+
+	var geojson = [
+		{
+    	"type": "FeatureCollection", 
+    	"features": [
+    	{
+    		"geometry": {
+    			"type": "Polygon", 
+    			"coordinates": 
+    			[[[-73.98916176045752, 40.71670754738093], [-73.98976130402956, 40.71555125122527], [-73.99020947971133, 40.71466333452034], [-73.99022867708042, 40.714577661211514], [-73.99023463019412, 40.71449057452664], [-73.99022724659416, 40.71440384504845], [-73.99076227255948, 40.71455297783801], [-73.99123262915506, 40.71448554847892], [-73.99214198184767, 40.71441870686825], [-73.99256953753697, 40.71438698226807], [-73.99282885011786, 40.71436413501875], [-73.99302299844388, 40.714354529749706], [-73.99395744839791, 40.71428973723333], [-73.99414750385738, 40.714267837253914], [-73.99432566940722, 40.71424979065966], [-73.99435497916798, 40.714246821183934], [-73.99450744661668, 40.71423007020377], [-73.99466396113333, 40.71421835304843], [-73.99473190602787, 40.71421461782171], [-73.99484760002419, 40.714208256879644], [-73.99648541753504, 40.71410616969118], [-73.99745159227427, 40.714065779173886], [-73.99751155846475, 40.71406803773912], [-73.99709934060434, 40.714617302054954], [-73.99681317811648, 40.7150358598228], [-73.99653839036793, 40.715490293348346], [-73.99623204069329, 40.71599469230297], [-73.99615640115609, 40.71608374222865], [-73.99606583642084, 40.71623054185004], [-73.99581623301692, 40.71664355953136], [-73.9954358691467, 40.717278142128265], [-73.99481490195015, 40.71845632361546], [-73.9938349703254, 40.718143375001375], [-73.99310143685166, 40.717921376672216], [-73.99222776060117, 40.717657345285275], [-73.99142984538071, 40.717416475475545], [-73.99131127239728, 40.71738058106583], [-73.9911833509713, 40.71734185880813], [-73.99071002088563, 40.71719950545523], [-73.98995731294113, 40.71697087458293], [-73.98916176045752, 40.71670754738093]]]}, 
+    		"type": "Feature", 
+    		"id": "50", 
+    		"properties": {
+    			"SLSVDT_SUM": 1260.0, 
+    			"Shape_Area": 2233319.75762, 
+    			"SHP_CENSUS_TRACT": "001600", 
+    			"Geo_COUNTY": "061", 
+    			"NAICS": "54", 
+    			"SHP_BOROUGH": "Manhattan", 
+    			"SLSVDT_MED": 1260.0, 
+    			"CT2010": "001600", 
+    			"PNACODE": 54186007.0, 
+    			"count_SUM": 1, 
+    			"NTAName": "Chinatown", 
+    			"EMPSDT_MED": 6.0, 
+    			"BoroName": "Manhattan", 
+    			"EMPSDT_SUM": 6.0, 
+    			"PRMSIC": 733101, 
+    			"PNATITL": "DIRECT MAIL ADVERTISING", 
+    			"lmi_ct": 35021.0, 
+    			"NAICS_LABEL": "PROFESSIONAL, SCIENTIFIC, AND TECHNICAL SERVICES", 
+    			"SICD": "MAILING & SHIPPING SERVICES"}
+    		}]
+		}];
+
+
+
+
+	var map = L.mapbox.map('map-one', 'mapbox.light', { //mapbox.light can be changed 
+    	scrollWheelZoom: false
+	}).setView([40.7127,-74.0059], 13);
+
+	var marker = L.marker([40.7300, -73.9950]).addTo(map);
+
+	var circle = L.circle([40.7300, -73.9950], 500, {
+    	color: 'red',
+    	fillColor: '#f03',
+    	fillOpacity: 0.5
+  	}).addTo(map);
+
+	L.mapbox.tileLayer('krluna.2f4b52e1').addTo(map);
+
+	var polygon = L.polygon([[40.7300, -73.9950], [40.7358, -73.9910], [40.7264, -73.9815]], {
+    color: 'red', 
+    fillColor: 'orange'
+  	}).addTo(map);
+
+  	//L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png').addTo(map);
+
+	var myLayer = L.mapbox.featureLayer().addTo(map);	
+	myLayer.setGeoJSON(geojson);
+
+	</script>
+</body>
+
+</html>
+
+

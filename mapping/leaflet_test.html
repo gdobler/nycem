@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Leaflet Test</title>
+	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+	<style>
+  body { margin:0; padding:0; }
+    .map { position:absolute; top:0; bottom:0; width:100%; }
+    </style>
+</head>
+
+
+<body>
+	<div id='map' class='map'> </div>
+	<script>
+
+  var map = L.map('map', 'krluna.2f4b52e1')
+  .setView([40.7127,-74.0059], 13);
+
+  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+  attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    maxZoom: 18,
+    id: 'krluna.c94a07f2',
+    accessToken: 'pk.eyJ1Ijoia3JsdW5hIiwiYSI6IjRkNWIwYjlmOWEzNjUyNDM4MDM0NjE2N2E3YjkwMWFjIn0.hsgqrS6U0DoptNhqWAyY9A'})
+    .addTo(map);
+
+  //var marker = L.marker([40.7300, -73.9950]).addTo(map);
+
+  var circle = L.circle([40.7300, -73.9950], 500, {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5
+  }).addTo(map);
+
+  var polygon = L.polygon([[40.7300, -73.9950], [40.7358, -73.9910], [40.7264, -73.9815]], {
+    color: 'red', 
+    fillColor: 'orange'
+  }).addTo(map);
+
+	</script>
+</body>
+
+</html>

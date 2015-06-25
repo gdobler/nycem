@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset=utf-8 />
+  <title></title>
+  <script src='https://api.tiles.mapbox.com/mapbox.js/v2.2.0/mapbox.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox.js/v2.2.0/mapbox.css' rel='stylesheet' />
+  <style>
+    body { margin:0; padding:0; }
+    .map { position:absolute; top:0; bottom:0; width:100%; }
+  </style>
+</head>
+<body>
+<div id='map-four' class='map'> </div>
+<script>
+L.mapbox.accessToken = 'pk.eyJ1Ijoia3JsdW5hIiwiYSI6IjRkNWIwYjlmOWEzNjUyNDM4MDM0NjE2N2E3YjkwMWFjIn0.hsgqrS6U0DoptNhqWAyY9A';
+var geojson = [
+  {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -73.9950,
+          40.7300
+        ]
+      },
+      "properties": {}
+    }
+  ]
+}
+
+];
+var map = L.mapbox.map('map-four', 'mapbox.light', {
+    scrollWheelZoom: false
+}).setView([40.7127,-74.0059], 13);
+
+var myLayer = L.mapbox.featureLayer().addTo(map);
+myLayer.setGeoJSON(geojson);
+</script>
+</body>
+</html>

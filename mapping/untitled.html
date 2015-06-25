@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<meta charset=utf-8 /> 
+	<title></title>
+	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.js'></script>
+	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.css' rel='stylesheet' />
+
+	<style>
+
+		body { margin:0; padding:0; }
+		.map { position:absolute; top:0; bottom:0; width:100%; }
+	</style>
+</head>	
+
+
+<body>
+
+	<div id = 'map-one', class='map'> </div>
+	<script>
+
+	L.mapbox.accessToken = 'pk.eyJ1Ijoia2wxNzcxIiwiYSI6IjQxODg3NDc4YWY5M2RjN2I4MzAzMThlODZiYmMyY2QxIn0.HpneTHvm9BP_0t3NBBBmvA';
+		L.mapbox.map('map-one', 'mapbox.streets').setView([38,829, -77.0252], 14);
+
+	</script>
+</body>
+</html>
