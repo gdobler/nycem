@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>Second Attempt</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.js'></script>
+<script src="lib/d3/d3.min.js" charset="utf-8"></script>
+<script src="lib/jquery/jquery.min.js"></script>
+<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.css' rel='stylesheet' />
+<style>
+body { margin:0; padding:0; }
+#map { position:absolute; top:0; bottom:0; width:100%; }
+#year_selector {
+	/*background:#fff;*/
+  	position:absolute;
+  	top:30px;left:300px;
+  	z-index:1;
+  	border-radius:3px;
+  	width:500px;
+  	border:0px;
+}
+#year_selector li {
+	font-size:30px;
+	color:#404040;
+	display:inline-block;
+	margin:0;padding:0;
+	padding:0px 0px;
+	text-decoration:none;
+	text-align:center;
+	vertical-align: middle;
+}
+
+#year_selector li:hover {
+	background:#f8f8f8;
+    color:#404040;
+}
+.buttons {
+	font-size: 30px;
+}
+.buttons.selected {
+	background:#3887BE;
+}
+#industry {
+	position: absolute;
+	top:200px;left:30px;
+	width:100px;
+}
+#industry li {
+	width: 50px;
+	font-size: 20px;
+	color:#404040;
+	display: block;
+	text-align: center;
+	vertical-align: middle;
+}
+</style>
+</head>
+<body>
+
+<div id='map'></div>
+
+<div id='year_selector'> 
+	<ul>
+		<li>
+			<button class='buttons' id='2010' onclick='function2010()'>2010</button>
+		</li>
+		<li>
+			<button class='buttons' id='2011' onclick='function2011()'>2011</button>
+		</li>
+		<li>
+			<button class='buttons' id='2012' onclick='function2012()'>2012</button>
+		</li>
+		<li>
+			<button class='buttons' id='2013' onclick='function2013()'>2013</button>
+		</li>
+		<li>
+			<button class='buttons' id='2014' onclick='function2014()'>2014</button>
+		</li>
+	</ul>
+</div>
+<div id='industry'>
+	<ul>
+		<li>
+			<button onclick='bandb()'>Bed and Breakfast</button>
+		</li>	
+		<li>
+			<button onclick='bowling()'>Bowling Centers</button>
+		</li>
+		<li>
+			<button onclick='pizza()'>Pizza</button>
+		</li>
+		<li>
+			<button onclick='stores()'>Convenience Stores</button>
+		</li>
+	</ul>	
+</div>
+<script>
+var path='geojson';
+var year='';
+var naics='';
+var pntatl='';
+var sicd='';
+var first = true;
+var featureLayer;
+var attributes = ["Median_Income_ct","EMPSDT_Median","SLSVDT_Sum","EMPSDT_Sum","PRMSIC","Business_Count","SLSVDT_Median"];
+var attibute = "Business_Count";
+
+function function2010() {
+	year = '2010';
+	console.log(year);
+}
+function function2011() {
+	year = '2011';
+	console.log(year);
+}
+function function2012() {
+	year = '2012';
+	console.log(year);
+}
+function function2013() {
+	year = '2013';
+	console.log(year);
+}
+function function2014() {
+	year = '2014';
+	console.log(year);
+}
+
+function bandb(){
+	path = 'geojson/2010/ACCOMMODATION AND FOOD SERVICES/BED-&-BREAKFAST INNS/BED & BREAKFAST ACCOMMODATIONS.geojson';
+	updateData(path);
+}
+function bowling(){
+	path = 'geojson/2010/ARTS, ENTERTAINMENT, AND RECREATION/BOWLING CENTERS/BOWLING CENTERS.geojson';
+	updateData(path);
+}
+
+function pizza(){
+	path = 'geojson/2010/ACCOMMODATION AND FOOD SERVICES/FULL-SERVICE RESTAURANTS/PIZZA.geojson';
+	updateData(path);
+}
+
+function stores(){
+	path = 'geojson/2010/RETAIL TRADE/CONVENIENCE STORES/CONVENIENCE STORES.geojson';
+	updateData(path);
+}
+
+function updateData(path){
+	var json = (function(){
+		var json = null;
+		$.ajax({
+			'async': false,
+			'global': false,
+			'url': path,
+			'dataType': 'geojson',
+			'success': function (data) {
+				json =data;
+			}
+		});
+		return json;
+	})
+	console.log(json);
+	if(first) {
+		console.log(first)
+		var dataLayer = new L.geoJson();
+		
+		$.ajax({
+			dataType: 'json',
+			url: path,
+			success: function(data) {
+				$(data.features).each(function(key,data){
+					dataLayer.addData(data);
+				});
+			}
+		}).error(function(){console.log('error')});
+		// var featureLayer = L.mapbox.featureLayer()
+  //   	.loadURL(path)
+  //   	// .setStyle({
+  //   	// 	style: getStyle()
+  //   	// })
+  //   	.addTo(map);
+  		dataLayer.setStyle(function(feature){
+  			return {
+  				fillColor: getColor(feature.getProperty('Business_Count'))
+  			};
+  		});
+  		dataLayer.addTo(map);
+    	first = false;
+
+	}
+	else{
+		console.log(first)
+    	map.eachLayer(function(layer){
+    		map.removeLayer(layer);
+    	});
+    	var tileLayer = L.mapbox.tileLayer('mapbox.light').addTo(map);
+		var dataLayer = new L.geoJson();
+    	
+    	$.ajax({
+			dataType: 'json',
+			url: path,
+			success: function(data) {
+				$(data.features).each(function(key,data){
+					dataLayer.addData(data);
+				});
+			}
+		}).error(function(){console.log('error')});
+		dataLayer.setStyle(function(feature){
+  			return {
+  				fillColor: getColor(feature.getProperty('Business_Count'))
+  			};
+  		});
+  		dataLayer.addTo(map);
+	}
+}
+
+function getStyle(feature) {
+	return {
+		fillColor: getColor("features"[properties][Business_Count])
+	};
+}
+
+function getColor(d) {
+	if(d > 4){
+		return '#a50f15';
+	} 
+	if(d > 3){
+		return '#de2d26';
+	} 
+	if(d>2){
+		return '#fb6a4a';
+	}
+	if(d>1){
+		return '#fcae91';
+	}
+	if(d>0){
+		return '#fee5d9'
+	}
+	return '#ffffff';
+}
+
+L.mapbox.accessToken = 'pk.eyJ1Ijoic2FtbHBvbGxhY2siLCJhIjoiNmFkOWY2MzEyY2M1MWNkMTcxZTViNGRjNmE5YmU0NDUifQ.1GsvK3aSrXn9HseAu76Y1w';
+var map = L.mapbox.map('map', 'mapbox.light')
+    .setView([40.7, -74.0], 11);
+
+
+
+</script>
+
+</body>
+</html>
