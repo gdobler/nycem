@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset=utf-8 />
+	<title></title>
+
+	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.2.0/mapbox.js'></script>
+	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.2.0/mapbox.css' rel='stylesheet' />
+	<style>
+  body {
+    color:#404040;
+    font:400 15px/22px 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
+    margin:0;
+    padding:0;
+    -webkit-font-smoothing:antialiased;
+  }
+  * {
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    box-sizing:border-box;
+  }
+  h1 {
+    font-size:22px;
+    margin:0;
+    font-weight:400;
+  }
+  a {
+    color:#404040;
+    text-decoration:none;
+  }
+  a:hover { color:#101010; }
+
+  .sidebar {
+    position:absolute;
+    width:33.3333%;
+    height:100%;
+    top:0;left:0;
+    overflow:hidden;
+    border-right:1px solid rgba(0,0,0,0.25);
+  }
+  .pad2 {
+    padding:20px;
+  }
+  .quiet {
+    color:#888;
+  }
+  .map {
+    position:absolute;
+    left:20.00000%;
+    width:80.0000%;
+    top:0;bottom:0;
+  }
+  .heading {
+    background:#fff;
+    border-bottom:1px solid #eee;
+    height:60px;
+    line-height:60px;
+    padding:0 10px;
+  }
+  .listings {
+    height:100%;
+    overflow:auto;
+    padding-bottom:60px;
+  }
+  .listings .item {
+    display:block;
+    border-bottom:1px solid #eee;
+    padding:10px;
+    text-decoration:none;
+  }
+  .listings .item:last-child { border-bottom:none; }
+  .listings .item .title {
+    display:block;
+    color:#00853e;
+    font-weight:700;
+  }
+  .listings .item .title small { font-weight:400; }
+  .listings .item.active .title,
+  .listings .item .title:hover { color:#8cc63f; }
+  .listings .item.active {
+    background-color:#f8f8f8;
+  }
+
+  ::-webkit-scrollbar {
+    width:3px;
+    height:3px;
+    border-left:0;
+    background:rgba(0,0,0,0.1);
+  }
+  ::-webkit-scrollbar-track {
+    background:none;
+  }
+  ::-webkit-scrollbar-thumb {
+    background:#00853e;
+    border-radius:0;
+  }
+
+  .clearfix { display:block; }
+  .clearfix:after {
+    content:'.';
+    display:block;
+    height:0;
+    clear:both;
+    visibility:hidden;
+  }
+
+  /* Marker tweaks */
+  .leaflet-popup-close-button {
+    display:none;
+  }
+  .leaflet-popup-content {
+    font:400 15px/22px 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
+    padding:0;
+    width:200px;
+  }
+  .leaflet-popup-content-wrapper {
+    padding:0;
+  }
+  .leaflet-popup-content h3 {
+    background:#91c949;
+    color:#fff;
+    margin:0;
+    display:block;
+    padding:10px;
+    border-radius:3px 3px 0 0;
+    font-weight:700;
+    margin-top:-15px;
+  }
+  .leaflet-popup-content div {
+    padding:10px;
+  }
+  .leaflet-container .leaflet-marker-icon { cursor:pointer; }
+  </style>
+</head>
+
+<body>
+	<div class='sidebar'>
+    	<div class='heading'>
+      		<h1>Census Tracts</h1>
+    	</div>
+    	<div id='listings' class='listings'></div>
+  	</div>
+	
+	<div id='map-one' class='map'> </div>
+	<script>
+
+	L.mapbox.accessToken = 'pk.eyJ1Ijoia3JsdW5hIiwiYSI6IjRkNWIwYjlmOWEzNjUyNDM4MDM0NjE2N2E3YjkwMWFjIn0.hsgqrS6U0DoptNhqWAyY9A';
+
+	var map = L.mapbox.map('map-one', 'mapbox.light', { //mapbox.light can be changed 
+    	scrollWheelZoom: false
+	}).setView([40.7127,-74.0059], 12);
+
+	map.scrollWheelZoom.disable();
+
+	var listings = document.getElementById('listings');
+	var locations = L.mapbox.featureLayer().addTo(map);
+	L.mapbox.tileLayer('krluna.2f4b52e1').addTo(map);
+
+	//locations.setGeoJSON(geojson)
+	locations.loadURL('doughnuts.geojson')
+
+	function setActive(el) {
+    	var siblings = listings.getElementsByTagName('div');
+    	for (var i = 0; i < siblings.length; i++) {
+      	siblings[i].className = siblings[i].className
+        	.replace(/active/, '').replace(/\s\s*$/, '');
+    	}
+ 
+    	el.className += ' active';
+  	}
+
+	locations.on('ready', function() {
+
+		map.fitBounds(locations.getBounds());
+
+		locations.eachLayer(function(locale) {
+
+			//iterate over each polygon 
+			
+			var prop = locale.feature.properties;
+			var popup = '<h3>NYC Census Tract</h3><div>' + prop.Census_Tract;
+			
+			var listing = listings.appendChild(document.createElement('div'));
+				listing.className = 'item';
+
+			var link = listing.appendChild(document.createElement('a'));
+	    		link.href = '#';
+	    		link.className = 'title';
+	    		// link.innerHTML = prop.SICD;
+	    		link.innerHTML = prop.Neighborhood_Name;
+
+	    	if (prop.Borough) {
+        		link.innerHTML += '<br /><small class="quiet">' + prop.Borough + '</small>';
+        		popup += '<br /><small class="quiet">' + prop.Neighborhood_Name + '</small>';
+   			}
+
+   			var details = listing.appendChild(document.createElement('div'));
+    		//details.innerHTML = prop.Shape_Area + ' sq. feet';
+    		details.innerHTML = 'ATTRIBUTE 1 <br /> ATTRIBUTE 2 <br /> ATTRIBUTE 3 <br /> ATTRIBUTE 4';
+
+
+    		link.onclick = function() {
+        		setActive(listing);
+        		//map.fitBounds(locale.getBounds());
+        		locale.setStyle({fillColor: '#ffc7b9'});
+        		map.setView(locale.getBounds().getCenter(), 15);
+        		//polygon.setStyle({fillColor: '#0000FF'});
+        		// map.setView(locale.getLatLngs(), 16);
+        		//map.setView(locale.getCenter(), 16);
+        		locale.openPopup();
+        		return false;
+        	};
+
+        	locale.on('click', function(e) {
+        		locale.setStyle({fillColor: '#ffc7b9'});
+      			map.panTo(locale.getBounds().getCenter());
+      			setActive(listing);
+    		});
+
+        	popup += '</div>';
+      		locale.bindPopup(popup);
+
+    	});
+	});
+		
+	</script>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+<!-- <script src="/js/leaflet-0.7.2/leaflet.ajax.min.js"></script> -->
+
+
+<!-- 
+
+var geojson = [
+	{"type": "FeatureCollection", "features": [{"geometry": {"type": "Polygon", "coordinates": [[[-74.00531695221702, 40.7218230811948], [-74.00523425282125, 40.7217429926099], [-74.00464225467427, 40.72135252360508], [-74.00393637719293, 40.72085332596395], [-74.00351895880122, 40.72055524441981], [-74.00326664538946, 40.72037598816037], [-74.00260711527609, 40.71990231921783], [-74.00189116000176, 40.71939646523613], [-74.0020987131479, 40.719152287770264], [-74.00254508272576, 40.71862577952581], [-74.00305242963135, 40.718024713757586], [-74.00353954077309, 40.717448329352], [-74.00403311851282, 40.71686991755362], [-74.00420531975494, 40.71666934995978], [-74.00454059233334, 40.71627881358093], [-74.00498321925413, 40.71575884142548], [-74.0054265740991, 40.71523495960528], [-74.00589558569285, 40.71467618882608], [-74.00755084506343, 40.71543172665131], [-74.0088303669821, 40.71601272445434], [-74.00921248334063, 40.7161868536097], [-74.0091224598272, 40.71691950562155], [-74.00907062199113, 40.71726347636704], [-74.0090072773677, 40.71759629154552], [-74.00894951843644, 40.71792373869068], [-74.00889013830718, 40.71826526099219], [-74.00882678527189, 40.71863999400514], [-74.0087543681025, 40.71902783057075], [-74.00870645688116, 40.71929497009605], [-74.0085908016646, 40.71995082784925], [-74.00847798345096, 40.720608064129685], [-74.00835216530152, 40.721320679897154], [-74.00823913960967, 40.721965377824475], [-74.00812391365956, 40.72262560275748], [-74.00799178312376, 40.723278534926585], [-74.00797374156068, 40.72336170649765], [-74.00794460793978, 40.72351497555741], [-74.0079191462985, 40.72369865273817], [-74.00763612728477, 40.72349658946764], [-74.00630550610784, 40.722548391035744], [-74.00591998851756, 40.722251837652074], [-74.00531695221702, 40.7218230811948]]]}, "type": "Feature", "id": "0", "properties": {"PNATITL": "MOBILE FOOD SVCS", "Shape_Area": 3677736.9612, "Median_Income_ct": 202153.0, "NAICS": "ACCOMMODATION AND FOOD SERVICES", "EMPSDT_Median": 1.0, "Census_Tract": "003300", "PNACODE": 72233002.0, "SLSVDT_Sum": 133.0, "Neighborhood_Name": "SoHo-TriBeCa-Civic Center-Little Italy", "EMPSDT_Sum": 1.0, "PRMSIC": 596316, "SICD": "COFFEE & FOOD SVC-MOBILE", "Borough": "Manhattan", "Business_Count": 1, "SLSVDT_Median": 133.0}}, {"geometry": {"type": "Polygon", "coordinates": [[[-73.96659055751338, 40.76154974790947], [-73.96657864292698, 40.76148069295523], [-73.96700189164312, 40.760904197023834], [-73.96746932356182, 40.760221721253004], [-73.96792910552037, 40.75959190304638], [-73.96803153932927, 40.75957695624126], [-73.96963216828041, 40.76025025478206], [-73.97114234003033, 40.76088966588644], [-73.9712499368941, 40.76093523175096], [-73.97075780393642, 40.76160751370848], [-73.97026531320616, 40.76228756323915], [-73.96980745586379, 40.762912321535616], [-73.96969517881566, 40.762864772453085], [-73.96819404816408, 40.76222563220734], [-73.96659055751338, 40.76154974790947]]]}, "type": "Feature", "id": "1", "properties": {"PNATITL": "MOBILE FOOD SVCS", "Shape_Area": 854082.515426, "Median_Income_ct": 90188.0, "NAICS": "ACCOMMODATION AND FOOD SERVICES", "EMPSDT_Median": 4.5, "Census_Tract": "011203", "PNACODE": 72233002.0, "SLSVDT_Sum": 1197.0, "Neighborhood_Name": "Turtle Bay-East Midtown", "EMPSDT_Sum": 9.0, "PRMSIC": 596316, "SICD": "COFFEE & FOOD SVC-MOBILE", "Borough": "Manhattan", "Business_Count": 2, "SLSVDT_Median": 598.5}}, {"geometry": {"type": "Polygon", "coordinates": [[[-73.98237259312786, 40.767390952884504], [-73.98288427617933, 40.766714396133096], [-73.9833737189086, 40.76604404416872], [-73.98382899595462, 40.76541727822521], [-73.98428943873107, 40.764790619351544], [-73.98712897335155, 40.765987954751324], [-73.98997095368635, 40.76718627422607], [-73.98951211007443, 40.76781418100446], [-73.98905790080826, 40.76843888928466], [-73.98856611547204, 40.76911461282982], [-73.98807002697754, 40.76978959480923], [-73.98522433971826, 40.76859342754742], [-73.98237259312786, 40.767390952884504]]]}, "type": "Feature", "id": "2", "properties": {"PNATITL": "MOBILE FOOD SVCS", "Shape_Area": 1955059.89956, "Median_Income_ct": 80896.0, "NAICS": "ACCOMMODATION AND FOOD SERVICES", "EMPSDT_Median": 6.0, "Census_Tract": "013900", "PNACODE": 72233002.0, "SLSVDT_Sum": 798.0, "Neighborhood_Name": "Clinton", "EMPSDT_Sum": 6.0, "PRMSIC": 596316, "SICD": "COFFEE & FOOD SVC-MOBILE", "Borough": "Manhattan", "Business_Count": 1, "SLSVDT_Median": 798.0}}]}
+	]; -->
