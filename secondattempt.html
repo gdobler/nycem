@@ -163,29 +163,40 @@ function updateData(path){
 	console.log(json);
 	if(first) {
 		console.log(first)
-		var dataLayer = new L.geoJson();
-		
-		$.ajax({
-			dataType: 'json',
-			url: path,
-			success: function(data) {
-				$(data.features).each(function(key,data){
-					dataLayer.addData(data);
-				});
-			}
-		}).error(function(){console.log('error')});
+		var dataLayer = L.mapbox.featureLayer().addTo(map);
+		dataLayer.loadURL(path);
+		// $.ajax({
+		// 	dataType: 'json',
+		// 	url: path,
+		// 	success: function(data) {
+		// 		$(data.features).each(function(key,data){
+		// 			dataLayer.addData(data);
+		// 		});
+		// 	}
+		// }).error(function(){console.log('error')});
+		dataLayer.on('ready', function(){
+    		dataLayer.eachLayer(function(polygon){
+    			polygon.setStyle({
+    				fillColor: getColor(polygon.feature.properties.Business_Count)
+    			});
+    		});
+    	});
+		// $.ajax({
+		// 	dataType: 'json',
+		// 	url: path,
+		// 	success: function(data) {
+		// 		$(data.features).each(function(key,data){
+		// 			dataLayer.addData(data);
+		// 		});
+		// 	}
+		// }).error(function(){console.log('error')});
 		// var featureLayer = L.mapbox.featureLayer()
   //   	.loadURL(path)
   //   	// .setStyle({
   //   	// 	style: getStyle()
   //   	// })
   //   	.addTo(map);
-  		dataLayer.setStyle(function(feature){
-  			return {
-  				fillColor: getColor(feature.getProperty('Business_Count'))
-  			};
-  		});
-  		dataLayer.addTo(map);
+  		
     	first = false;
 
 	}
@@ -195,7 +206,7 @@ function updateData(path){
     		map.removeLayer(layer);
     	});
     	var tileLayer = L.mapbox.tileLayer('mapbox.light').addTo(map);
-		var dataLayer = new L.geoJson();
+		var dataLayer = new L.geoJson().addTo(map);
     	
     	$.ajax({
 			dataType: 'json',
@@ -206,12 +217,15 @@ function updateData(path){
 				});
 			}
 		}).error(function(){console.log('error')});
-		dataLayer.setStyle(function(feature){
-  			return {
-  				fillColor: getColor(feature.getProperty('Business_Count'))
-  			};
-  		});
-  		dataLayer.addTo(map);
+    	dataLayer.on('ready', function(){
+    		dataLayer.eachLayer(function(polygon){
+    			polygon.setStyle({
+    				color: getColor(polygon.feature.getProperty('Business_Count'))
+    			});
+    		});
+    	});
+		
+  		
 	}
 }
 
