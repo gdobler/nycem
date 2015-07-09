@@ -20,9 +20,14 @@
     box-sizing:border-box;
   }
   h1 {
-    font-size:22px;
+    font-size:30px;
     margin:0;
-    font-weight:400;
+    font-weight:700;
+  }
+  h2 {
+    font-size:20px;
+    margin:0;
+    font-weight:700;
   }
   a {
     color:#404040;
@@ -48,14 +53,34 @@
     position:absolute;
     left:20%;
     width:80%;
+    margin-top:60px;
     top:0;bottom:0;
   }
   .heading {
-    background:#fff;
+    background:#3887BE;
+    color:#fff;
     border-bottom:1px solid #eee;
     height:60px;
     line-height:60px;
     padding:0 10px;
+    text-align: center;
+  }
+  .crossbar_year {
+  	background:#3887BE;
+  	border-bottom:1px solid #eee;
+  	height:60px;
+  	line-height:60px;
+  	width: 20%;
+  	margin-left:20%;
+  }
+  .button_heading {
+    background:#3887BE;
+    color:#fff;
+    border-bottom:1px solid #eee;
+    height:60px;
+    line-height:60px;
+    padding:0 10px;
+    text-align: center;
   }
   .listings {
     height:100%;
@@ -65,24 +90,23 @@
   .listings .item {
     display:block;
     border-bottom:1px solid #eee;
-    padding:10px;
+    padding:5px;
     text-decoration:none;
   }
   .listings .item:last-child { border-bottom:none; }
   .listings .item .title {
     display:block;
-    color:#00853e;
-    font-weight:700;
+    color:#3887BE;
+    font-weight:600;
   }
-  .listings .item .title small { font-weight:400; }
+  .listings .item .title small { font-weight:600; }
   .listings .item.active .title,
-  .listings .item .title:hover { color:#8cc63f; }
+  .listings .item .title:hover { color:#3887BE; }
   .listings .item.active {
     background-color:#f8f8f8;
   }
-
   ::-webkit-scrollbar {
-    width:3px;
+    width:10px;
     height:3px;
     border-left:0;
     background:rgba(0,0,0,0.1);
@@ -91,7 +115,7 @@
     background:none;
   }
   ::-webkit-scrollbar-thumb {
-    background:#00853e;
+    background:#3887BE;
     border-radius:0;
   }
 
@@ -117,7 +141,7 @@
     padding:0;
   }
   .leaflet-popup-content h3 {
-    background:#91c949;
+    background:#3887BE;
     color:#fff;
     margin:0;
     display:block;
@@ -134,12 +158,37 @@
 </head>
 
 <body>
+	<style> </style>
+
+	<!-- <nav class='menu-ui'>
+  		<a href='#' id='year_code'>SELECT YEAR</a>
+	</nav>
+
+	<nav class='menu-ui1'>
+  		<a href='#' id='naics_code'>SELECT NAICS</a>
+	</nav>
+
+	<nav class='menu-ui2'>
+  		<a href='#' id='pnatitl_code'>SELECT PNATITL</a>
+	</nav>
+
+	<nav class='menu-ui3'>
+  		<a href='#' id='sicd_code'>SELECT PNATITL</a>
+	</nav> -->
+
 	<div class='sidebar'>
     	<div class='heading'>
-      		<h1>Census Tracts</h1>
+      		<h1>NYC ECONOMIC MAP</h1>
     	</div>
+
     	<div id='listings' class='listings'></div>
   	</div>
+
+  	<div class='crossbar_year'>
+		<div class='heading'>
+      		<h2>Year</h2>
+    	</div>
+	</div>
 	
 	<div id='map-one' class='map'> </div>
 	<script>
@@ -155,11 +204,24 @@
 	var listings = document.getElementById('listings');
 	var locations = L.mapbox.featureLayer().addTo(map);
 	L.mapbox.tileLayer('krluna.2f4b52e1').addTo(map);
-
-	// .setStyle({color: 'red'});
-
-	//locations.setGeoJSON(geojson)
 	locations.loadURL('doughnuts.geojson')
+
+
+
+
+	// var legend = L.control({position: 'topright'});
+	// 	legend.onAdd = function (map) {
+	// 		var div = L.DomUtil.create('div', 'info legend');
+	// 		div.innerHTML = '<select><option>1</option><option>2</option><option>3</option></select>';
+	// 		div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
+	// 		return div;
+	// 		};
+	// 		legend.addTo(map);
+
+
+
+
+
 
 	function setActive(el) {
     	var siblings = listings.getElementsByTagName('div');
@@ -176,7 +238,6 @@
 
 			locale.setStyle({weight: 0});
 			//iterate over each polygon 
-			
 			var prop = locale.feature.properties;
 			var popup = '<h3>NYC Census Tract</h3><div>' + prop.Census_Tract;
 			
@@ -195,7 +256,6 @@
    			}
 
    			var details = listing.appendChild(document.createElement('div'));
-    		//details.innerHTML = prop.Shape_Area + ' sq. feet';
     		details.innerHTML = 'ATTRIBUTE 1 <br /> ATTRIBUTE 2 <br /> ATTRIBUTE 3';
 
 
@@ -205,9 +265,6 @@
         		locations.setStyle({fillColor: '#bbb'});
         		locale.setStyle({fillColor: '#f1f075'});
         		map.setView(locale.getBounds().getCenter(), 15);
-        		//polygon.setStyle({fillColor: '#0000FF'});
-        		// map.setView(locale.getLatLngs(), 16);
-        		//map.setView(locale.getCenter(), 16);
         		locale.openPopup();
         		return false;
         	};
