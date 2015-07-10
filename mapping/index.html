@@ -3,9 +3,16 @@
 <head>
 	<meta charset=utf-8 />
 	<title>NYC Economic Map</title>
-	<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700' rel='stylesheet'>
-	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.2.0/mapbox.js'></script>
+
 	<link href='https://api.tiles.mapbox.com/mapbox.js/v2.2.0/mapbox.css' rel='stylesheet' />
+	<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700' rel='stylesheet'>
+	<link rel="stylesheet" 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script src='https://api.tiles.mapbox.com/mapbox.js/v2.2.0/mapbox.js'></script>
+	
 	<style>
   body {
     color:#404040;
@@ -34,7 +41,6 @@
     text-decoration:none;
   }
   a:hover { color:#101010; }
-
   .sidebar {
     position:absolute;
     width:20%;
@@ -59,28 +65,70 @@
   .heading {
     background:#3887BE;
     color:#fff;
-    border-bottom:1px solid #eee;
+    border-bottom:0px solid #eee;
     height:60px;
-    line-height:60px;
-    padding:0 10px;
+  /*  line-height:60px;
+    padding:0 10px;*/
     text-align: center;
   }
-  .crossbar_year {
-  	background:#3887BE;
-  	border-bottom:1px solid #eee;
+  .heading h1 {
+  	vertical-align: middle;
+  	padding-top: 10px;
+  }
+  .crossbar {
   	height:60px;
   	line-height:60px;
-  	width: 20%;
+  	width: 80%;
   	margin-left:20%;
   }
-  .button_heading {
-    background:#3887BE;
-    color:#fff;
-    border-bottom:1px solid #eee;
-    height:60px;
-    line-height:60px;
-    padding:0 10px;
+  .crossbar .dropdown {
+  	background:#3887BE;
+  	width: 25%;
+  	display:inline-block;
+  	margin-right: -3px;
+    text-align:center;
+    font-size:20px;
+  }
+  .crossbar .dropdown .title {
+  	display:block;
+    color:#eee;
+    font-weight:600;
+  }
+  .crossbar .dropdown a:hover {
+  	background:#4b93c4;
+    color:#404040;
+  }
+  .crossbar .dropdown ul {
+  	background: #f4f4f4;
+  	padding: 0;
+    position: absolute;
+    /*top: 48px;*/
     text-align: center;
+    width: 100%;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    display: none;
+    opacity: 0;
+    visibility: hidden;
+    -webkit-transiton: opacity 0.2s;
+    -moz-transition: opacity 0.2s;
+    -ms-transition: opacity 0.2s;
+    -o-transition: opacity 0.2s;
+    -transition: opacity 0.2s;
+  }
+  .crossbar .dropdown ul li {
+  	font-size: 20px;
+  }
+  .crossbar .dropdown:hover ul {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+  }
+  .crossbar .dropdown ul li:hover {
+  	background: #ff6666;
+    display: block;
+    opacity: 1;
   }
   .listings {
     height:100%;
@@ -118,7 +166,6 @@
     background:#3887BE;
     border-radius:0;
   }
-
   .clearfix { display:block; }
   .clearfix:after {
     content:'.';
@@ -127,8 +174,6 @@
     clear:both;
     visibility:hidden;
   }
-
-  /* Marker tweaks */
   .leaflet-popup-close-button {
     display:none;
   }
@@ -160,37 +205,55 @@
 <body>
 	<style> </style>
 
-	<!-- <nav class='menu-ui'>
-  		<a href='#' id='year_code'>SELECT YEAR</a>
-	</nav>
-
-	<nav class='menu-ui1'>
-  		<a href='#' id='naics_code'>SELECT NAICS</a>
-	</nav>
-
-	<nav class='menu-ui2'>
-  		<a href='#' id='pnatitl_code'>SELECT PNATITL</a>
-	</nav>
-
-	<nav class='menu-ui3'>
-  		<a href='#' id='sicd_code'>SELECT PNATITL</a>
-	</nav> -->
-
 	<div class='sidebar'>
+
     	<div class='heading'>
       		<h1>NYC ECONOMIC MAP</h1>
     	</div>
 
     	<div id='listings' class='listings'></div>
+
   	</div>
 
-  	<div class='crossbar_year'>
-		<div class='heading'>
-      		<h2>Year</h2>
-    	</div>
+  	<div class='crossbar'>
+
+  		<div class='dropdown'>
+  			<a href="#" id="year" class="title">Select Year<br></a>
+  			<ul class="dropdown-menu" id="testlist">
+  				<li>2010</li>
+  				<li>2011</li>
+  				<li>2012</li>
+  				<li>2013</li>
+  				<li>2014</li>
+  			</ul>	
+  		</div>
+
+  		<div class='dropdown'>
+  			<a href="#" id="naics" class="title">Select NAICS<br></a>
+  			<ul class="dropdown-menu">
+  				
+  			</ul>
+  		</div>
+
+  		<div class='dropdown'>
+  			<a href="#" id="pnatitl" class="title">Select PNATITL<br></a>
+  			<ul class="dropdown-menu">
+  				
+  			</ul>
+  		</div>
+
+  		<div class='dropdown'>
+  			<a href="#" id="sicd" class="title">Select SICD<br></a>
+  			<ul class="dropdown-menu">
+  				
+  			</ul>
+  		</div>
+
 	</div>
-	
+
+
 	<div id='map-one' class='map'> </div>
+
 	<script>
 
 	L.mapbox.accessToken = 'pk.eyJ1Ijoia3JsdW5hIiwiYSI6IjRkNWIwYjlmOWEzNjUyNDM4MDM0NjE2N2E3YjkwMWFjIn0.hsgqrS6U0DoptNhqWAyY9A';
@@ -204,24 +267,7 @@
 	var listings = document.getElementById('listings');
 	var locations = L.mapbox.featureLayer().addTo(map);
 	L.mapbox.tileLayer('krluna.2f4b52e1').addTo(map);
-	locations.loadURL('doughnuts.geojson')
-
-
-
-
-	// var legend = L.control({position: 'topright'});
-	// 	legend.onAdd = function (map) {
-	// 		var div = L.DomUtil.create('div', 'info legend');
-	// 		div.innerHTML = '<select><option>1</option><option>2</option><option>3</option></select>';
-	// 		div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
-	// 		return div;
-	// 		};
-	// 		legend.addTo(map);
-
-
-
-
-
+	locations.loadURL('coffee.geojson')
 
 	function setActive(el) {
     	var siblings = listings.getElementsByTagName('div');
@@ -232,8 +278,34 @@
     	el.className += ' active';
   	}
 
+  	$('#testlist').find("li").click(function() {
+  		$("li").not(this).css('background-color', '#f4f4f4');
+  		$(this).css('background-color', '#ff6666');
+		console.log(this);
+	});
+
+	//2010/accommodation_and_food_services/snack_and_nonalcoholic_beverage_bars=
+
+
+  	var buildingList = [
+  	{"BuildingName": "B1", "BuildingNumber": "0456"}, 
+  	{"BuildingName": "B2", "BuildingNumber": "0021"}, 
+  	{"BuildingName": "B3", "BuildingNumber": "0021"}, 
+  	{"BuildingName": "B4", "BuildingNumber": "0021"}, 
+  	{"BuildingName": "B5",  "BuildingNumber": "0021"}
+  	];
+
+	// $.each(buildingList, function (index, value) {
+ //    	$("#testlist").append($("<li>").text(value.BuildingName));
+	// 	})
+
+	// $('.dropdown-menu li').click(function () {
+ //    	console.log(this)
+	// 	});
+
+
 	locations.on('ready', function() {
-		//map.fitBounds(locations.getBounds());
+		map.fitBounds(locations.getBounds());
 		locations.eachLayer(function(locale) {
 
 			locale.setStyle({weight: 0});
@@ -247,7 +319,6 @@
 			var link = listing.appendChild(document.createElement('a'));
 	    		link.href = '#';
 	    		link.className = 'title';
-	    		// link.innerHTML = prop.SICD;
 	    		link.innerHTML = prop.Neighborhood_Name;
 
 	    	if (prop.Borough) {
