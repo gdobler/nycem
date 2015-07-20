@@ -118,8 +118,14 @@
     -o-transition: opacity 0.2s;
     -transition: opacity 0.2s;
   }
-  .crossbar .dropdown ul li {
+  .crossbar .dropdown ul {
   	font-size: 20px;
+  }
+
+  .crossbar .dropdown li{
+    border-bottom:1px solid rgba(0,0,0,0.25);
+    font-size: 16px;
+    line-height: 30px;
   }
   .crossbar .dropdown:hover ul {
     display: block;
@@ -200,6 +206,20 @@
     padding:10px;
   }
   .leaflet-container .leaflet-marker-icon { cursor:pointer; }
+
+  #lmi-button {
+    position:absolute;
+    top:90px;right:30px;
+    font-size:20px;
+    color:#fff;
+    background:#3887BE;
+    padding: 3px;
+  }
+
+  #filler {
+    text-align: center;
+    font-size: 20px;
+  }
   </style>
 </head>
 
@@ -213,7 +233,10 @@
       		<h1>NYC ECONOMIC MAP</h1>
     	</div>
 
-    	<div id='listings' class='listings'></div>
+    	<div id='listings' class='listings'>
+        <br><br>
+        <h1 id='filler'> -Select Industry-</h1>
+      </div>
 
   	</div>
 
@@ -256,6 +279,8 @@
 
 	<div id='map-one' class='map'> </div>
 
+  <div id='lmi-button' type='button' onclick='toggleLMI()'>LMI Census Tracts</div>
+
 	<script>
 
   var path = '';
@@ -263,6 +288,7 @@
   var naics = '';
   var pnatitl = '';
   var sicd = '';
+  var lmi_active = false
   
 
   L.mapbox.accessToken = 'pk.eyJ1Ijoia3JsdW5hIiwiYSI6IjRkNWIwYjlmOWEzNjUyNDM4MDM0NjE2N2E3YjkwMWFjIn0.hsgqrS6U0DoptNhqWAyY9A';
@@ -323,24 +349,53 @@
     sicd = clickedsicd;
     console.log(sicd);
     path = 'geojson/'+year+'/'+naics+'/'+pnatitl+'/'+sicd+'.geojson';
-    locations = '';
 
     if (first) {
       console.log(path)
       locations = L.mapbox.featureLayer().addTo(map);
       locations.loadURL(path);
+      
       first = false;
+      $('#listings').empty();
+      myfunction();
     }
     else {
       map.eachLayer(function(layer){
         map.removeLayer(layer);
       });
       L.mapbox.tileLayer('krluna.2f4b52e1').addTo(map);
-      locations = L.mapbox.featureLayer().addTo(map);
-      locations.loadURL(path)
+      if (lmi_active) {
+        lmi = L.mapbox.featureLayer().addTo(map);
+        lmi.loadURL('income_census_tracts.geojson');
+        lmi.on('ready', function(){
+          lmi.eachLayer(function(polygon) {
+            if (polygon.feature.properties.FIRST_R109 < 55113) {
+              polygon.setStyle({
+                fillColor: '#3887BE',
+                weight: 0
+              })
+            }
+            else {
+              polygon.setStyle({
+                fillOpacity: 0,
+                weight: 0
+              })
+            }
+          })
+          locations = L.mapbox.featureLayer().addTo(map);
+          locations.loadURL(path);
+          $('#listings').empty();
+          myfunction();
+        })
+      }
+      else{
+        locations = L.mapbox.featureLayer().addTo(map);
+        locations.loadURL(path);
+        $('#listings').empty();
+        myfunction();
+      }
+
     }
-    $('#listings').empty();
-    myfunction();
   }
 
 	
@@ -379,8 +434,73 @@
  //    	console.log(this)
 	// 	});
 
+  function toggleLMI() {
+    if (lmi_active){
+      lmi_active = false
+      map.removeLayer(lmi)
+      console.log("LMI off")
+    }
+    else {
+      console.log("LMI on")
+      lmi_active = true       
+      if (first) {
+        lmi = L.mapbox.featureLayer().addTo(map);
+        lmi.loadURL('income_census_tracts.geojson');
+        lmi.on('ready', function(){
+          lmi.eachLayer(function(polygon) {
+            if (polygon.feature.properties.FIRST_R109 < 55113) {
+              polygon.setStyle({
+                fillColor: '#3887BE',
+                weight: 0
+              })
+            }
+            else {
+              polygon.setStyle({
+                fillOpacity: 0,
+                weight: 0
+              })
+            }
+          })
+        })
+      }
+      else {
+        map.eachLayer(function(layer){
+          map.removeLayer(layer);
+        });
+        L.mapbox.tileLayer('krluna.2f4b52e1').addTo(map);
+        lmi = L.mapbox.featureLayer().addTo(map);
+        lmi.loadURL('income_census_tracts.geojson');
+        
+        lmi.on('ready', function(){
+          lmi.eachLayer(function(polygon) {
+            if (polygon.feature.properties.FIRST_R109 < 52259) {
+              polygon.setStyle({
+                fillColor: '#3887BE',
+                weight: 0
+              })
+            }
+            else {
+              polygon.setStyle({
+                fillOpacity: 0,
+                weight: 0
+              })
+            }
+          })
+          
+          locations = L.mapbox.featureLayer().addTo(map);
+          locations.loadURL(path);
+          console.log(path)
+          myfunction();
+        })
+      }
+    }
+  }
+
+  
   function myfunction(){
     locations.on('ready', function() {
+      console.log(locations._layers)
+      locations.setStyle({fillColor: '#f22'});
       map.fitBounds(locations.getBounds());
       locations.eachLayer(function(locale) {
 
@@ -403,22 +523,22 @@
           }
 
           var details = listing.appendChild(document.createElement('div'));
-          details.innerHTML = 'ATTRIBUTE 1 <br /> ATTRIBUTE 2 <br /> ATTRIBUTE 3';
+          details.innerHTML = 'Small Business Count: '+prop.Business_Count+'<br /> Median Employee Count: '+prop.EMPSDT_Median+'<br /> Median Business Sales: $'+prop.SLSVDT_Median+'000<br /> Median HH Income: $'+prop.Median_Income_ct+'<br /> Census Tract Area: '+Math.round(prop.Shape_Area)
 
 
           link.onclick = function() {
               setActive(listing);
               //map.fitBounds(locale.getBounds());
-              locations.setStyle({fillColor: '#bbb'});
-              locale.setStyle({fillColor: '#f1f075'});
+              locations.setStyle({fillColor: '#f22'});
+              locale.setStyle({fillColor: '#eceb47'});
               map.setView(locale.getBounds().getCenter(), 15);
               locale.openPopup();
               return false;
             };
 
             locale.on('click', function(e) {
-              locations.setStyle({fillColor: '#bbb'});
-              locale.setStyle({fillColor: '#f1f075'});
+              locations.setStyle({fillColor: '#f22'});
+              locale.setStyle({fillColor: '#eceb47'});
               map.panTo(locale.getBounds().getCenter());
               setActive(listing);
           });
@@ -429,54 +549,8 @@
         });
     });
   }
-	// locations.on('ready', function() {
-	// 	map.fitBounds(locations.getBounds());
-	// 	locations.eachLayer(function(locale) {
 
-	// 		locale.setStyle({weight: 0});
-	// 		//iterate over each polygon 
-	// 		var prop = locale.feature.properties;
-	// 		var popup = '<h3>NYC Census Tract</h3><div>' + prop.Census_Tract;
-			
-	// 		var listing = listings.appendChild(document.createElement('div'));
-	// 			listing.className = 'item';
-
-	// 		var link = listing.appendChild(document.createElement('a'));
-	//     		link.href = '#';
-	//     		link.className = 'title';
-	//     		link.innerHTML = prop.Neighborhood_Name;
-
-	//     	if (prop.Borough) {
- //        		link.innerHTML += '<br /><small class="quiet">' + prop.Borough + '</small>';
- //        		popup += '<br /><small class="quiet">' + prop.Neighborhood_Name + '</small>';
- //   			}
-
- //   			var details = listing.appendChild(document.createElement('div'));
- //    		details.innerHTML = 'ATTRIBUTE 1 <br /> ATTRIBUTE 2 <br /> ATTRIBUTE 3';
-
-
- //    		link.onclick = function() {
- //        		setActive(listing);
- //        		//map.fitBounds(locale.getBounds());
- //        		locations.setStyle({fillColor: '#bbb'});
- //        		locale.setStyle({fillColor: '#f1f075'});
- //        		map.setView(locale.getBounds().getCenter(), 15);
- //        		locale.openPopup();
- //        		return false;
- //        	};
-
- //        	locale.on('click', function(e) {
- //        		locations.setStyle({fillColor: '#bbb'});
- //        		locale.setStyle({fillColor: '#f1f075'});
- //      			map.panTo(locale.getBounds().getCenter());
- //      			setActive(listing);
- //    		});
-
- //        	popup += '</div>';
- //      		locale.bindPopup(popup);
-
- //    	});
-	// });
+  
 		
 	</script>
 </body>
