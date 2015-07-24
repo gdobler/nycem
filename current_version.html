@@ -136,6 +136,12 @@
   	background: #ff6666;
     display: block;
     opacity: 1;
+    cursor: pointer;
+  }
+  .crossbar .dropdown ul li:active {
+    background: #CC0033;
+    display: block;
+    opacity: 1;
   }
   .listings {
     height:100%;
@@ -187,7 +193,7 @@
   .leaflet-popup-content {
     font:400 15px/22px 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
     padding:0;
-    width:200px;
+    width:240px;
   }
   .leaflet-popup-content-wrapper {
     padding:0;
@@ -214,6 +220,85 @@
     color:#fff;
     background:#3887BE;
     padding: 3px;
+    width: 10%;
+    text-align: center;
+    border-bottom: 1px solid rgba(0,0,0,0.25);
+  }
+  #cluster1 {
+    position:absolute;
+    top:118px;right:30px;
+    font-size:20px;
+    color:#fff;
+    background:#3887BE;
+    padding: 3px;
+    width: 10%;
+    text-align: center;
+    border-bottom: 1px solid rgba(0,0,0,0.25);
+  }
+  #cluster2 {
+    position:absolute;
+    top:146px;right:30px;
+    font-size:20px;
+    color:#fff;
+    background:#3887BE;
+    padding: 3px;
+    width: 10%;
+    text-align: center;
+    border-bottom: 1px solid rgba(0,0,0,0.25);
+  }
+  #cluster3 {
+    position:absolute;
+    top:174px;right:30px;
+    font-size:20px;
+    color:#fff;
+    background:#3887BE;
+    padding: 3px;
+    width: 10%;
+    text-align: center;
+    border-bottom: 1px solid rgba(0,0,0,0.25);
+  }
+  #cluster4 {
+    position:absolute;
+    top:202px;right:30px;
+    font-size:20px;
+    color:#fff;
+    background:#3887BE;
+    padding: 3px;
+    width: 10%;
+    text-align: center;
+    border-bottom: 1px solid rgba(0,0,0,0.25);
+  }
+  #cluster5 {
+    position:absolute;
+    top:230px;right:30px;
+    font-size:20px;
+    color:#fff;
+    background:#3887BE;
+    padding: 3px;
+    width: 10%;
+    text-align: center;
+  }
+  .buttons:hover{
+    cursor: pointer;
+  }
+
+  #lmi-button:active {
+    background:#3857BE;
+  }
+  #cluster1:active {
+    background:#3857BE;
+  }
+  #cluster2:active {
+    background:#3857BE;
+  }
+  #cluster3:active {
+    background:#3857BE;
+  }
+  #cluster4:active {
+    background:#3857BE;
+  }
+  #cluster5:active {
+    background:#3857BE;
   }
 
   #filler {
@@ -279,7 +364,13 @@
 
 	<div id='map-one' class='map'> </div>
 
-  <div id='lmi-button' type='button' onclick='toggleLMI()'>LMI Census Tracts</div>
+  <div id='lmi-button' class='buttons' type='button' onclick='toggleLMI()'>LMI Census Tracts</div>
+  <div id='cluster1' class='buttons' type='button' onclick='showcluster1()'>Cluster 1</div>
+  <div id='cluster2' class='buttons' type='button' onclick='showcluster2()'>Cluster 2</div>
+  <div id='cluster3' class='buttons' type='button' onclick='showcluster3()'>Cluster 3</div>
+  <div id='cluster4' class='buttons' type='button' onclick='showcluster4()'>Cluster 4</div>
+  <div id='cluster5' class='buttons' type='button' onclick='showcluster5()'>Cluster 5</div>
+  
 
 	<script>
 
@@ -289,6 +380,12 @@
   var pnatitl = '';
   var sicd = '';
   var lmi_active = false
+  var cluster1_active = false
+  var cluster2_active = false
+  var cluster3_active = false
+  var cluster4_active = false
+  var cluster5_active = false
+  var clustermap_color = '#333300'
   
 
   L.mapbox.accessToken = 'pk.eyJ1Ijoia3JsdW5hIiwiYSI6IjRkNWIwYjlmOWEzNjUyNDM4MDM0NjE2N2E3YjkwMWFjIn0.hsgqrS6U0DoptNhqWAyY9A';
@@ -310,7 +407,8 @@
     year_dict = file_dict[year];
     var naicsHTML = '';
     for (var naicscode in year_dict) {
-      naicsHTML += '<li type="button" onclick="naicsClick('+"'"+naicscode+"'"+')" id="'+naicscode+'" value="'+naicscode+'">'+naicscode+'</li>';
+      var dummy = naicscode.split('_').join(' ');
+      naicsHTML += '<li type="button" onclick="naicsClick('+"'"+naicscode+"'"+')" id="'+naicscode+'" value="'+naicscode+'">'+dummy+'</li>';
     }
     $('#naicslist').empty()
     $('#pnatitllist').empty()
@@ -324,7 +422,8 @@
     naics_dict = file_dict[year][naics];
     var pnatitlHTML = '';
     for (var pnatitlcode in naics_dict) {
-      pnatitlHTML += '<li type="button" onclick="pnatitlClick('+"'"+pnatitlcode+"'"+')" id="'+pnatitlcode+'" value="'+pnatitlcode+'">'+pnatitlcode+'</li>';
+      var dummy = pnatitlcode.split('_').join(' ');
+      pnatitlHTML += '<li type="button" onclick="pnatitlClick('+"'"+pnatitlcode+"'"+')" id="'+pnatitlcode+'" value="'+pnatitlcode+'">'+dummy+'</li>';
     }
     $('#pnatitllist').empty()
     $('#sicdlist').empty()
@@ -337,7 +436,8 @@
     pnatitl_dict = file_dict[year][naics][pnatitl];
     var sicdHTML = '';
     for (var sicdcode in pnatitl_dict) {
-      sicdHTML += '<li type="button" onclick="sicdClick('+"'"+sicdcode+"'"+')" id="'+sicdcode+'" value="'+sicdcode+'">'+sicdcode+'</li>';
+      var dummy = sicdcode.split('_').join(' ');
+      sicdHTML += '<li type="button" onclick="sicdClick('+"'"+sicdcode+"'"+')" id="'+sicdcode+'" value="'+sicdcode+'">'+dummy+'</li>';
     }
     $('#sicdlist').empty()
     $(sicdHTML).appendTo('#sicdlist')
@@ -366,10 +466,10 @@
       L.mapbox.tileLayer('krluna.2f4b52e1').addTo(map);
       if (lmi_active) {
         lmi = L.mapbox.featureLayer().addTo(map);
-        lmi.loadURL('income_census_tracts.geojson');
+        lmi.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
         lmi.on('ready', function(){
           lmi.eachLayer(function(polygon) {
-            if (polygon.feature.properties.FIRST_R109 < 55113) {
+            if (polygon.feature.properties.SE_T057_00 < 55113) {
               polygon.setStyle({
                 fillColor: '#3887BE',
                 weight: 0
@@ -382,17 +482,271 @@
               })
             }
           })
+          if (cluster1_active) {
+            mapcluster = L.mapbox.featureLayer().addTo(map);
+            mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+            mapcluster.on('ready', function(){
+              mapcluster.eachLayer(function(polygon) {
+                if (polygon.feature.properties.cluster == 0) {
+                  polygon.setStyle({
+                    weight: 1,
+                    color: clustermap_color,
+                    fillOpacity: 0
+                  })
+                }
+                else {
+                  polygon.setStyle({
+                    fillOpacity: 0,
+                    weight: 0
+                  })
+                }
+              })
+              locations = L.mapbox.featureLayer().addTo(map);
+              locations.loadURL(path);
+              $('#listings').empty();
+              myfunction();
+            })
+          }
+          else if (cluster2_active){
+            mapcluster = L.mapbox.featureLayer().addTo(map);
+            mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+            mapcluster.on('ready', function(){
+              mapcluster.eachLayer(function(polygon) {
+                if (polygon.feature.properties.cluster == 1) {
+                  polygon.setStyle({
+                    weight: 1,
+                    color: clustermap_color,
+                    fillOpacity: 0
+                  })
+                }
+                else {
+                  polygon.setStyle({
+                    fillOpacity: 0,
+                    weight: 0
+                  })
+                }
+              })
+              locations = L.mapbox.featureLayer().addTo(map);
+              locations.loadURL(path);
+              $('#listings').empty();
+              myfunction();
+            })
+          }
+          else if(cluster3_active){
+            mapcluster = L.mapbox.featureLayer().addTo(map);
+            mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+            mapcluster.on('ready', function(){
+              mapcluster.eachLayer(function(polygon) {
+                if (polygon.feature.properties.cluster == 2) {
+                  polygon.setStyle({
+                    weight: 1,
+                    color: clustermap_color,
+                    fillOpacity: 0
+                  })
+                }
+                else {
+                  polygon.setStyle({
+                    fillOpacity: 0,
+                    weight: 0
+                  })
+                }
+              })
+              locations = L.mapbox.featureLayer().addTo(map);
+              locations.loadURL(path);
+              $('#listings').empty();
+              myfunction();
+            })
+          }
+          else if (cluster4_active){
+            mapcluster = L.mapbox.featureLayer().addTo(map);
+            mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+            mapcluster.on('ready', function(){
+              mapcluster.eachLayer(function(polygon) {
+                if (polygon.feature.properties.cluster == 3) {
+                  polygon.setStyle({
+                    weight: 1,
+                    color: clustermap_color,
+                    fillOpacity: 0
+                  })
+                }
+                else {
+                  polygon.setStyle({
+                    fillOpacity: 0,
+                    weight: 0
+                  })
+                }
+              })
+              locations = L.mapbox.featureLayer().addTo(map);
+              locations.loadURL(path);
+              $('#listings').empty();
+              myfunction();
+            })
+          }
+          else if (cluster5_active){
+            mapcluster = L.mapbox.featureLayer().addTo(map);
+            mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+            mapcluster.on('ready', function(){
+              mapcluster.eachLayer(function(polygon) {
+                if (polygon.feature.properties.cluster == 4) {
+                  polygon.setStyle({
+                    weight: 1,
+                    color: clustermap_color,
+                    fillOpacity: 0
+                  })
+                }
+                else {
+                  polygon.setStyle({
+                    fillOpacity: 0,
+                    weight: 0
+                  })
+                }
+              })
+              locations = L.mapbox.featureLayer().addTo(map);
+              locations.loadURL(path);
+              $('#listings').empty();
+              myfunction();
+            })
+          }
+          else {
+            locations = L.mapbox.featureLayer().addTo(map);
+            locations.loadURL(path);
+            $('#listings').empty();
+            myfunction();
+          }
+        })
+      }
+      else{
+        if (cluster1_active) {
+          mapcluster = L.mapbox.featureLayer().addTo(map);
+          mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+          mapcluster.on('ready', function(){
+            mapcluster.eachLayer(function(polygon) {
+              if (polygon.feature.properties.cluster == 0) {
+                polygon.setStyle({
+                  weight: 1,
+                  color: clustermap_color,
+                  fillOpacity: 0
+                })
+              }
+              else {
+                polygon.setStyle({
+                  fillOpacity: 0,
+                  weight: 0
+                })
+              }
+            })
+            locations = L.mapbox.featureLayer().addTo(map);
+            locations.loadURL(path);
+            $('#listings').empty();
+            myfunction();
+          })
+        }
+        else if (cluster2_active){
+          mapcluster = L.mapbox.featureLayer().addTo(map);
+          mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+          mapcluster.on('ready', function(){
+            mapcluster.eachLayer(function(polygon) {
+              if (polygon.feature.properties.cluster == 1) {
+                polygon.setStyle({
+                  weight: 1,
+                  color: clustermap_color,
+                  fillOpacity: 0
+                })
+              }
+              else {
+                polygon.setStyle({
+                  fillOpacity: 0,
+                  weight: 0
+                })
+              }
+            })
+            locations = L.mapbox.featureLayer().addTo(map);
+            locations.loadURL(path);
+            $('#listings').empty();
+            myfunction();
+          })
+        }
+        else if(cluster3_active){
+          mapcluster = L.mapbox.featureLayer().addTo(map);
+          mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+          mapcluster.on('ready', function(){
+            mapcluster.eachLayer(function(polygon) {
+              if (polygon.feature.properties.cluster == 2) {
+                polygon.setStyle({
+                  weight: 1,
+                  color: clustermap_color,
+                  fillOpacity: 0
+                })
+              }
+              else {
+                polygon.setStyle({
+                  fillOpacity: 0,
+                  weight: 0
+                })
+              }
+            })
+            locations = L.mapbox.featureLayer().addTo(map);
+            locations.loadURL(path);
+            $('#listings').empty();
+            myfunction();
+          })
+        }
+        else if (cluster4_active){
+          mapcluster = L.mapbox.featureLayer().addTo(map);
+          mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+          mapcluster.on('ready', function(){
+            mapcluster.eachLayer(function(polygon) {
+              if (polygon.feature.properties.cluster == 3) {
+                polygon.setStyle({
+                  weight: 1,
+                  color: clustermap_color,
+                  fillOpacity: 0
+                })
+              }
+              else {
+                polygon.setStyle({
+                  fillOpacity: 0,
+                  weight: 0
+                })
+              }
+            })
+            locations = L.mapbox.featureLayer().addTo(map);
+            locations.loadURL(path);
+            $('#listings').empty();
+            myfunction();
+          })
+        }
+        else if (cluster5_active){
+          mapcluster = L.mapbox.featureLayer().addTo(map);
+          mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+          mapcluster.on('ready', function(){
+            mapcluster.eachLayer(function(polygon) {
+              if (polygon.feature.properties.cluster == 4) {
+                polygon.setStyle({
+                  weight: 1,
+                  color: clustermap_color,
+                  fillOpacity: 0
+                })
+              }
+              else {
+                polygon.setStyle({
+                  fillOpacity: 0,
+                  weight: 0
+                })
+              }
+            })
+            locations = L.mapbox.featureLayer().addTo(map);
+            locations.loadURL(path);
+            $('#listings').empty();
+            myfunction();
+          })
+        }
+        else {
           locations = L.mapbox.featureLayer().addTo(map);
           locations.loadURL(path);
           $('#listings').empty();
           myfunction();
-        })
-      }
-      else{
-        locations = L.mapbox.featureLayer().addTo(map);
-        locations.loadURL(path);
-        $('#listings').empty();
-        myfunction();
+        }
       }
 
     }
@@ -445,10 +799,10 @@
       lmi_active = true       
       if (first) {
         lmi = L.mapbox.featureLayer().addTo(map);
-        lmi.loadURL('income_census_tracts.geojson');
+        lmi.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
         lmi.on('ready', function(){
           lmi.eachLayer(function(polygon) {
-            if (polygon.feature.properties.FIRST_R109 < 55113) {
+            if (polygon.feature.properties.SE_T057_00 < 55113) {
               polygon.setStyle({
                 fillColor: '#3887BE',
                 weight: 0
@@ -469,11 +823,11 @@
         });
         L.mapbox.tileLayer('krluna.2f4b52e1').addTo(map);
         lmi = L.mapbox.featureLayer().addTo(map);
-        lmi.loadURL('income_census_tracts.geojson');
+        lmi.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
         
         lmi.on('ready', function(){
           lmi.eachLayer(function(polygon) {
-            if (polygon.feature.properties.FIRST_R109 < 52259) {
+            if (polygon.feature.properties.SE_T057_00 < 55113) {
               polygon.setStyle({
                 fillColor: '#3887BE',
                 weight: 0
@@ -486,11 +840,673 @@
               })
             }
           })
+          if (cluster1_active) {
+            mapcluster = L.mapbox.featureLayer().addTo(map);
+            mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+            mapcluster.on('ready', function(){
+              mapcluster.eachLayer(function(polygon) {
+                if (polygon.feature.properties.cluster == 0) {
+                  polygon.setStyle({
+                    weight: 1,
+                    color: clustermap_color,
+                    fillOpacity: 0
+                  })
+                }
+                else {
+                  polygon.setStyle({
+                    fillOpacity: 0,
+                    weight: 0
+                  })
+                }
+              })
+              locations = L.mapbox.featureLayer().addTo(map);
+              locations.loadURL(path);
+              console.log(path)
+              myfunction();
+            })
+          }
+          else if (cluster2_active){
+            mapcluster = L.mapbox.featureLayer().addTo(map);
+            mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+            mapcluster.on('ready', function(){
+              mapcluster.eachLayer(function(polygon) {
+                if (polygon.feature.properties.cluster == 1) {
+                  polygon.setStyle({
+                    weight: 1,
+                    color: clustermap_color,
+                    fillOpacity: 0
+                  })
+                }
+                else {
+                  polygon.setStyle({
+                    fillOpacity: 0,
+                    weight: 0
+                  })
+                }
+              })
+              locations = L.mapbox.featureLayer().addTo(map);
+              locations.loadURL(path);
+              console.log(path)
+              myfunction();
+            })
+          }
+          else if(cluster3_active){
+            mapcluster = L.mapbox.featureLayer().addTo(map);
+            mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+            mapcluster.on('ready', function(){
+              mapcluster.eachLayer(function(polygon) {
+                if (polygon.feature.properties.cluster == 2) {
+                  polygon.setStyle({
+                    weight: 1,
+                    color: clustermap_color,
+                    fillOpacity: 0
+                  })
+                }
+                else {
+                  polygon.setStyle({
+                    fillOpacity: 0,
+                    weight: 0
+                  })
+                }
+              })
+              locations = L.mapbox.featureLayer().addTo(map);
+              locations.loadURL(path);
+              console.log(path)
+              myfunction();
+            })
+          }
+          else if (cluster4_active){
+            mapcluster = L.mapbox.featureLayer().addTo(map);
+            mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+            mapcluster.on('ready', function(){
+              mapcluster.eachLayer(function(polygon) {
+                if (polygon.feature.properties.cluster == 3) {
+                  polygon.setStyle({
+                    weight: 1,
+                    color: clustermap_color,
+                    fillOpacity: 0
+                  })
+                }
+                else {
+                  polygon.setStyle({
+                    fillOpacity: 0,
+                    weight: 0
+                  })
+                }
+              })
+              locations = L.mapbox.featureLayer().addTo(map);
+              locations.loadURL(path);
+              console.log(path)
+              myfunction();
+            })
+          }
+          else if (cluster5_active){
+            mapcluster = L.mapbox.featureLayer().addTo(map);
+            mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+            mapcluster.on('ready', function(){
+              mapcluster.eachLayer(function(polygon) {
+                if (polygon.feature.properties.cluster == 4) {
+                  polygon.setStyle({
+                    weight: 1,
+                    color: clustermap_color,
+                    fillOpacity: 0
+                  })
+                }
+                else {
+                  polygon.setStyle({
+                    fillOpacity: 0,
+                    weight: 0
+                  })
+                }
+              })
+              locations = L.mapbox.featureLayer().addTo(map);
+              locations.loadURL(path);
+              console.log(path)
+              myfunction();
+            })
+          }
+          else {
+            locations = L.mapbox.featureLayer().addTo(map);
+            locations.loadURL(path);
+            console.log(path)
+            myfunction();
+          }
           
-          locations = L.mapbox.featureLayer().addTo(map);
-          locations.loadURL(path);
-          console.log(path)
-          myfunction();
+        })
+      }
+    }
+  }
+
+  function showcluster1(){
+    if(cluster1_active){
+      cluster1_active = false
+      map.removeLayer(mapcluster)
+      console.log('cluster off')
+    }
+    else {
+      cluster1_active = true
+      if (cluster2_active){
+        cluster2_active = false
+        map.removeLayer(mapcluster)
+      }
+      if (cluster3_active){
+        cluster3_active = false
+        map.removeLayer(mapcluster)
+      }
+      if (cluster4_active){
+        cluster4_active = false
+        map.removeLayer(mapcluster)
+      }
+      if (cluster5_active){
+        cluster5_active = false
+        map.removeLayer(mapcluster)
+      }
+      console.log('cluster on')
+      if (first){
+        mapcluster = L.mapbox.featureLayer().addTo(map);
+        mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+        mapcluster.on('ready', function(){
+          mapcluster.eachLayer(function(polygon) {
+            if (polygon.feature.properties.cluster == 0) {
+              polygon.setStyle({
+                weight: 1,
+                color: clustermap_color,
+                fillOpacity: 0
+              })
+            }
+            else {
+              polygon.setStyle({
+                fillOpacity: 0,
+                weight: 0
+              })
+            }
+          }) 
+        })
+      }
+      else {
+        map.eachLayer(function(layer){
+          map.removeLayer(layer);
+        });
+        L.mapbox.tileLayer('krluna.2f4b52e1').addTo(map);
+        mapcluster = L.mapbox.featureLayer().addTo(map);
+        mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+        mapcluster.on('ready', function(){
+          mapcluster.eachLayer(function(polygon) {
+            if (polygon.feature.properties.cluster == 0) {
+              polygon.setStyle({
+                weight: 1,
+                color: clustermap_color,
+                fillOpacity: 0
+              })
+            }
+            else {
+              polygon.setStyle({
+                fillOpacity: 0,
+                weight: 0
+              })
+            }
+
+          })
+          if (lmi_active) {
+            lmi = L.mapbox.featureLayer().addTo(map);
+            lmi.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+            
+            lmi.on('ready', function(){
+              lmi.eachLayer(function(polygon) {
+                if (polygon.feature.properties.SE_T057_00 < 55113) {
+                  polygon.setStyle({
+                    fillColor: '#3887BE',
+                    weight: 0
+                  })
+                }
+                else {
+                  polygon.setStyle({
+                    fillOpacity: 0,
+                    weight: 0
+                  })
+                }
+              })
+              
+              locations = L.mapbox.featureLayer().addTo(map);
+              locations.loadURL(path);
+              console.log(path);
+              myfunction();
+            })
+          }
+          else {
+            locations = L.mapbox.featureLayer().addTo(map);
+            locations.loadURL(path);
+            console.log(path);
+            myfunction();
+          }
+        })
+      }
+    }
+  }
+
+  function showcluster2(){
+    if(cluster2_active){
+      cluster2_active = false
+      map.removeLayer(mapcluster)
+      console.log('cluster off')
+    }
+    else {
+      cluster2_active = true
+      if (cluster1_active){
+        cluster1_active = false
+        map.removeLayer(mapcluster)
+      }
+      if (cluster3_active){
+        cluster3_active = false
+        map.removeLayer(mapcluster)
+      }
+      if (cluster4_active){
+        cluster4_active = false
+        map.removeLayer(mapcluster)
+      }
+      if (cluster5_active){
+        cluster5_active = false
+        map.removeLayer(mapcluster)
+      }
+      console.log('cluster on')
+      if (first){
+        mapcluster = L.mapbox.featureLayer().addTo(map);
+        mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+        mapcluster.on('ready', function(){
+          mapcluster.eachLayer(function(polygon) {
+            if (polygon.feature.properties.cluster == 1) {
+              polygon.setStyle({
+                weight: 1,
+                color: clustermap_color,
+                fillOpacity: 0
+              })
+            }
+            else {
+              polygon.setStyle({
+                fillOpacity: 0,
+                weight: 0
+              })
+            }
+          }) 
+        })
+      }
+      else {
+        map.eachLayer(function(layer){
+          map.removeLayer(layer);
+        });
+        L.mapbox.tileLayer('krluna.2f4b52e1').addTo(map);
+        mapcluster = L.mapbox.featureLayer().addTo(map);
+        mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+        mapcluster.on('ready', function(){
+          mapcluster.eachLayer(function(polygon) {
+            if (polygon.feature.properties.cluster == 1) {
+              polygon.setStyle({
+                weight: 1,
+                color: clustermap_color,
+                fillOpacity: 0
+              })
+            }
+            else {
+              polygon.setStyle({
+                fillOpacity: 0,
+                weight: 0
+              })
+            }
+
+          })
+          if (lmi_active) {
+            lmi = L.mapbox.featureLayer().addTo(map);
+            lmi.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+            
+            lmi.on('ready', function(){
+              lmi.eachLayer(function(polygon) {
+                if (polygon.feature.properties.SE_T057_00 < 55113) {
+                  polygon.setStyle({
+                    fillColor: '#3887BE',
+                    weight: 0
+                  })
+                }
+                else {
+                  polygon.setStyle({
+                    fillOpacity: 0,
+                    weight: 0
+                  })
+                }
+              })
+              
+              locations = L.mapbox.featureLayer().addTo(map);
+              locations.loadURL(path);
+              console.log(path);
+              myfunction();
+            })
+          }
+          else {
+            locations = L.mapbox.featureLayer().addTo(map);
+            locations.loadURL(path);
+            console.log(path);
+            myfunction();
+          }
+        })
+      }
+    }
+  }
+
+  function showcluster3(){
+    if(cluster3_active){
+      cluster3_active = false
+      map.removeLayer(mapcluster)
+      console.log('cluster off')
+    }
+    else {
+      cluster3_active = true
+      if (cluster1_active){
+        cluster1_active = false
+        map.removeLayer(mapcluster)
+      }
+      if (cluster2_active){
+        cluster2_active = false
+        map.removeLayer(mapcluster)
+      }
+      if (cluster4_active){
+        cluster4_active = false
+        map.removeLayer(mapcluster)
+      }
+      if (cluster5_active){
+        cluster5_active = false
+        map.removeLayer(mapcluster)
+      }
+      console.log('cluster on')
+      if (first){
+        mapcluster = L.mapbox.featureLayer().addTo(map);
+        mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+        mapcluster.on('ready', function(){
+          mapcluster.eachLayer(function(polygon) {
+            if (polygon.feature.properties.cluster == 2) {
+              polygon.setStyle({
+                weight: 1,
+                color: clustermap_color,
+                fillOpacity: 0
+              })
+            }
+            else {
+              polygon.setStyle({
+                fillOpacity: 0,
+                weight: 0
+              })
+            }
+          }) 
+        })
+      }
+      else {
+        map.eachLayer(function(layer){
+          map.removeLayer(layer);
+        });
+        L.mapbox.tileLayer('krluna.2f4b52e1').addTo(map);
+        mapcluster = L.mapbox.featureLayer().addTo(map);
+        mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+        mapcluster.on('ready', function(){
+          mapcluster.eachLayer(function(polygon) {
+            if (polygon.feature.properties.cluster == 2) {
+              polygon.setStyle({
+                weight: 1,
+                color: clustermap_color,
+                fillOpacity: 0
+              })
+            }
+            else {
+              polygon.setStyle({
+                fillOpacity: 0,
+                weight: 0
+              })
+            }
+
+          })
+          if (lmi_active) {
+            lmi = L.mapbox.featureLayer().addTo(map);
+            lmi.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+            
+            lmi.on('ready', function(){
+              lmi.eachLayer(function(polygon) {
+                if (polygon.feature.properties.SE_T057_00 < 55113) {
+                  polygon.setStyle({
+                    fillColor: '#3887BE',
+                    weight: 0
+                  })
+                }
+                else {
+                  polygon.setStyle({
+                    fillOpacity: 0,
+                    weight: 0
+                  })
+                }
+              })
+              
+              locations = L.mapbox.featureLayer().addTo(map);
+              locations.loadURL(path);
+              console.log(path);
+              myfunction();
+            })
+          }
+          else {
+            locations = L.mapbox.featureLayer().addTo(map);
+            locations.loadURL(path);
+            console.log(path);
+            myfunction();
+          }
+        })
+      }
+    }
+  }
+
+  function showcluster4(){
+    if(cluster4_active){
+      cluster4_active = false
+      map.removeLayer(mapcluster)
+      console.log('cluster off')
+    }
+    else {
+      cluster4_active = true
+      if (cluster1_active){
+        cluster1_active = false
+        map.removeLayer(mapcluster)
+      }
+      if (cluster3_active){
+        cluster3_active = false
+        map.removeLayer(mapcluster)
+      }
+      if (cluster2_active){
+        cluster2_active = false
+        map.removeLayer(mapcluster)
+      }
+      if (cluster5_active){
+        cluster5_active = false
+        map.removeLayer(mapcluster)
+      }
+      console.log('cluster on')
+      if (first){
+        mapcluster = L.mapbox.featureLayer().addTo(map);
+        mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+        mapcluster.on('ready', function(){
+          mapcluster.eachLayer(function(polygon) {
+            if (polygon.feature.properties.cluster == 3) {
+              polygon.setStyle({
+                weight: 1,
+                color: clustermap_color,
+                fillOpacity: 0
+              })
+            }
+            else {
+              polygon.setStyle({
+                fillOpacity: 0,
+                weight: 0
+              })
+            }
+          }) 
+        })
+      }
+      else {
+        map.eachLayer(function(layer){
+          map.removeLayer(layer);
+        });
+        L.mapbox.tileLayer('krluna.2f4b52e1').addTo(map);
+        mapcluster = L.mapbox.featureLayer().addTo(map);
+        mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+        mapcluster.on('ready', function(){
+          mapcluster.eachLayer(function(polygon) {
+            if (polygon.feature.properties.cluster == 3) {
+              polygon.setStyle({
+                weight: 1,
+                color: clustermap_color,
+                fillOpacity: 0
+              })
+            }
+            else {
+              polygon.setStyle({
+                fillOpacity: 0,
+                weight: 0
+              })
+            }
+
+          })
+          if (lmi_active) {
+            lmi = L.mapbox.featureLayer().addTo(map);
+            lmi.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+            
+            lmi.on('ready', function(){
+              lmi.eachLayer(function(polygon) {
+                if (polygon.feature.properties.SE_T057_00 < 55113) {
+                  polygon.setStyle({
+                    fillColor: '#3887BE',
+                    weight: 0
+                  })
+                }
+                else {
+                  polygon.setStyle({
+                    fillOpacity: 0,
+                    weight: 0
+                  })
+                }
+              })
+              
+              locations = L.mapbox.featureLayer().addTo(map);
+              locations.loadURL(path);
+              console.log(path);
+              myfunction();
+            })
+          }
+          else {
+            locations = L.mapbox.featureLayer().addTo(map);
+            locations.loadURL(path);
+            console.log(path);
+            myfunction();
+          }
+        })
+      }
+    }
+  }
+
+  function showcluster5(){
+    if(cluster5_active){
+      cluster5_active = false
+      map.removeLayer(mapcluster)
+      console.log('cluster off')
+    }
+    else {
+      cluster5_active = true
+      if (cluster1_active){
+        cluster1_active = false
+        map.removeLayer(mapcluster)
+      }
+      if (cluster3_active){
+        cluster3_active = false
+        map.removeLayer(mapcluster)
+      }
+      if (cluster4_active){
+        cluster4_active = false
+        map.removeLayer(mapcluster)
+      }
+      if (cluster2_active){
+        cluster2_active = false
+        map.removeLayer(mapcluster)
+      }
+      console.log('cluster on')
+      if (first){
+        mapcluster = L.mapbox.featureLayer().addTo(map);
+        mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+        mapcluster.on('ready', function(){
+          mapcluster.eachLayer(function(polygon) {
+            if (polygon.feature.properties.cluster == 4) {
+              polygon.setStyle({
+                weight: 1,
+                color: clustermap_color,
+                fillOpacity: 0
+              })
+            }
+            else {
+              polygon.setStyle({
+                fillOpacity: 0,
+                weight: 0
+              })
+            }
+          }) 
+        })
+      }
+      else {
+        map.eachLayer(function(layer){
+          map.removeLayer(layer);
+        });
+        L.mapbox.tileLayer('krluna.2f4b52e1').addTo(map);
+        mapcluster = L.mapbox.featureLayer().addTo(map);
+        mapcluster.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+        mapcluster.on('ready', function(){
+          mapcluster.eachLayer(function(polygon) {
+            if (polygon.feature.properties.cluster == 4) {
+              polygon.setStyle({
+                weight: 1,
+                color: clustermap_color,
+                fillOpacity: 0
+              })
+            }
+            else {
+              polygon.setStyle({
+                fillOpacity: 0,
+                weight: 0
+              })
+            }
+
+          })
+          if (lmi_active) {
+            lmi = L.mapbox.featureLayer().addTo(map);
+            lmi.loadURL('FINAL_CT_CLUSTER_MHI.geojson');
+            
+            lmi.on('ready', function(){
+              lmi.eachLayer(function(polygon) {
+                if (polygon.feature.properties.SE_T057_00 < 55113) {
+                  polygon.setStyle({
+                    fillColor: '#3887BE',
+                    weight: 0
+                  })
+                }
+                else {
+                  polygon.setStyle({
+                    fillOpacity: 0,
+                    weight: 0
+                  })
+                }
+              })
+              
+              locations = L.mapbox.featureLayer().addTo(map);
+              locations.loadURL(path);
+              console.log(path);
+              myfunction();
+            })
+          }
+          else {
+            locations = L.mapbox.featureLayer().addTo(map);
+            locations.loadURL(path);
+            console.log(path);
+            myfunction();
+          }
         })
       }
     }
@@ -499,7 +1515,7 @@
   
   function myfunction(){
     locations.on('ready', function() {
-      console.log(locations._layers)
+      console.log(locations._layers);
       locations.setStyle({fillColor: '#f22'});
       map.fitBounds(locations.getBounds());
       locations.eachLayer(function(locale) {
@@ -507,7 +1523,7 @@
         locale.setStyle({weight: 0});
         //iterate over each polygon 
         var prop = locale.feature.properties;
-        var popup = '<h3>NYC Census Tract</h3><div>' + prop.Census_Tract;
+        var popup = '<h3>'+prop.Neighborhood_Name+'</h3><div>' + prop.Census_Tract;
         
         var listing = listings.appendChild(document.createElement('div'));
           listing.className = 'item';
@@ -519,11 +1535,13 @@
 
           if (prop.Borough) {
               link.innerHTML += '<br /><small class="quiet">' + prop.Borough + '</small>';
-              popup += '<br /><small class="quiet">' + prop.Neighborhood_Name + '</small>';
+              popup += '<br /><small class="quiet">' + prop.Borough + '</small>';
           }
 
           var details = listing.appendChild(document.createElement('div'));
-          details.innerHTML = 'Small Business Count: '+prop.Business_Count+'<br /> Median Employee Count: '+prop.EMPSDT_Median+'<br /> Median Business Sales: $'+prop.SLSVDT_Median+'000<br /> Median HH Income: $'+prop.Median_Income_ct+'<br /> Census Tract Area: '+Math.round(prop.Shape_Area)
+          details.innerHTML = 'Small Business Count: '+prop.Business_Count+'<br /> Median Employee Count: '+prop.EMPSDT_Median+'<br /> Median Business Sales: $'+prop.SLSVDT_Median+'000<br /> Median HH Income: $'+prop.Median_Income_ct+'<br /> Census Tract Area: '+Math.round(prop.Shape_Area)+'<br /> Cluster: '+(prop.cluster+1)
+
+          popup += '<br />Small Business Count: '+prop.Business_Count+'<br /> Median Employee Count: '+prop.EMPSDT_Median+'<br /> Median Business Sales: $'+prop.SLSVDT_Median+'000<br /> Median HH Income: $'+prop.Median_Income_ct+'<br /> Census Tract Area: '+Math.round(prop.Shape_Area)+'<br /> Cluster: '+(prop.cluster+1)
 
 
           link.onclick = function() {
