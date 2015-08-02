@@ -1,0 +1,96 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Thin Sectioned Essay
+% LaTeX Template
+% Version 1.0 (3/8/13)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original Author:
+% Nicolas Diaz (nsdiaz@uc.cl) with extensive modifications by:
+% Vel (vel@latextemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[11pt]{article} % Font size (can be 10pt, 11pt or 12pt) and paper size (remove a4paper for US letter paper)
+
+\usepackage[protrusion=true,expansion=true]{microtype} % Better typography
+\usepackage{graphicx} % Required for including pictures
+\usepackage{wrapfig} % Allows in-line images
+\usepackage[margin=1.25in]{geometry}
+%\graphicspath{ {/Users/jms3917/Desktop/NYCEM/report/images/} }
+
+\usepackage[scaled]{helvet} % Use the Helvetica font
+\renewcommand\familydefault{\sfdefault} 
+\usepackage[T1]{fontenc} % Required for accented characters
+
+\usepackage{mathpazo} 
+\usepackage[T1]{fontenc} 
+\linespread{1.05} % Change line spacing here, Palatino benefits from a slight increase by default
+
+\makeatletter
+\renewcommand\@biblabel[1]{\textbf{#1.}} % Change the square brackets for each bibliography item from '[1]' to '1.'
+\renewcommand{\@listI}{\itemsep=0pt} % Reduce the space between items in the itemize and enumerate environments and the bibliography
+
+\renewcommand{\maketitle}{ % Customize the title - do not edit title and author name here, see the TITLE block below
+\begin{flushright} % Right align
+{\LARGE\@title} % Increase the font size of the title
+
+\vspace{50pt} % Some vertical space between the title and author name
+
+{\large\@author} % Author name
+\\\@date % Date
+
+\vspace{40pt} % Some vertical space between the author block and abstract
+\end{flushright}
+}
+
+%----------------------------------------------------------------------------------------
+%	TITLE
+%----------------------------------------------------------------------------------------
+
+\title{\textbf{New York City Economic Map}\\ % Title
+Case Study} % Subtitle
+
+\author{\textsc{Tong Jian, Kenneth Luna, Samuel Pollack \& Julia M. Smith} % Author
+\\{\textit{M.S. Candidates, NYU Center for Urban Science + Progress}}} % Institution
+
+\date{\today} % Date
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Print the title section
+
+%----------------------------------------------------------------------------------------
+%	ESSAY BODY
+%----------------------------------------------------------------------------------------
+
+\section*{The Urban Challenge}
+
+The New York City Economic Map (NYCEM) has been undertaken as a capstone project following last year's development of the New York City Economic Profile. In its current iteration, the team sought to develop a queryable database of small business activity across New York City where information is translated visually onto an interactive map. The database includes summary demographic, industry, and employment statistics for each census tract. Relying heavily on public data, this project supports New York City's open data and analytics initiatives.
+\\\\
+The intention of NYCEM is to provide a method for visualizing and comparing specific industry activity in order to most effectively target outreach and other economic development services. This understanding is critical to the development of small business initiatives. Research into existing services showed that small business outreach events and trainings were predominantly held in community centers and open to all existing or potential small business owners. While certainly inclusionary, take-up of services may be enhanced through a more targeted strategy that pinpoints exact census tracts and industries. For instance, in census tracts with a recent spike in the number of a pizza establishments, services might be targeted at business plan development with an emphasis on differentiation in order to distinguish each business from the market and capture requisite demand.
+\\\\
+Upon selecting an industry, NYCEM provides summary statistics for the census tract, including median household income and median business revenue. Perhaps most interesting to stakeholders is the depiction of industry activity within the census tract over time, as well as the census tract's employment activity compared to other tracts. Each census tract is assigned a cluster number, 1-5, and when selected, depicts a plot of mean employment by industry across the cluster of similar census tracts. 
+
+%------------------------------------------------
+
+\section*{Findings and Implications for Urban Informatics Practice}
+
+Data has been pulled from four primary sources, three publicly available and one commercially available. Demographic data originates from the most recent American Community Survey from years 2009 to 2013 which includes relevant information such as household income, race, and geography to the census tract level. Employment by industry data from 2012 was obtained from the Census Longitudinal Employer-Household Dynamics (LEHD) Original-Destination Employment Statistics (LODES). Private data for this project has been procured by NYU from ReferenceUSA, a data provider which has collected and tabulated survey responses of business profiles with employee count and associated revenue to a very granular level across the years 2010 to 2014. ReferenceUSA data was aggregated and compared to Census' Zip Code Business Patterns in order to gauge the degree to which the survey deviated from the known universe of businesses defined by the Census.
+\\\\
+Data wrangling efforts for construction of the NYCEM database concentrated on aligning our available data sources in order to compile a single table that will inform querying and visual representation. Data was joined at the census tract level to include the Standard Industrial Classification (SICD), Primary NAICS Title Lable (PNATITL), county/borough, and census tract and the sum and median of both annuals sales volume and employee count were extrapolated. The resulting dataframe provides a hierarchy of summary statistics at the census tract level. The dataset in this form contains 4,500+ SICD codes grouped into 940+ PNATITL codes. The team felt that this level of granularity would be too much for our use-case, therefore we appended one of the 24 NAICS codes to each PNATITL-SICD combination. This data structure will allow us to present users with higher-level categorizations, and iteratively work their way down to the appropriate business category.
+\\\\
+Upon running the mapping visualization locally (available at http://github.com/gdobler/nycem), the user is able to select census tracts and view summary statistics from the database on the side panel. Perhaps most central to understanding the business context within each census tract is an understanding of how that census tract compares across New York City. Using ACS 2009-2013 estimates, the team noted in the summary panel whether Census tract median household income was located above or below the median household income of all households in New York City in 2013, \$52,259. Next, when the user clicks on either the side panel or the census tract within view, a pop-up is generated that provides relevant employment statistics from LODES. Beyond querying, this LODES information has been clustered using k-means in order to identify census tracts that have experienced similar employment patterns across NAICS codes.
+\\\\
+Using analytics projects to inform civic decision making can expedite program development and help to ensure more meaningful results. NYCEM fills the need for an interactive tool that quickly synthesizes relevant industry, employment, and demographic statistics. While American Fact Finder or other Census tools could provide comparable information for each census tract on a one-off basis, NYCEM provides a thoughtfully designed database of the most current and relevant data sources available in order to increase efficiency and enhance take-up of services.
+\end{document}
